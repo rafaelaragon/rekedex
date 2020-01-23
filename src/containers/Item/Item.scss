@@ -1,0 +1,50 @@
+.Item {
+  text-align: center;
+  display: inline;
+  a {
+      margin: auto;
+      text-decoration: underline;
+      color: black;
+  }
+  a:hover {
+      color: black;
+      font-weight: bold;
+  }
+  img {
+    margin: auto;
+    margin-top: 2vh;
+    width: 12vw;
+    background-color: rgba(205, 205, 255, 0.25);
+    border-radius: 500px;
+  }
+  img#pokedollar {
+      margin-top: 0;
+    width: 0.6vw;
+    background-color: none;
+  }
+  div.card {
+    margin:  auto;
+    border: none;
+    background-color: rgba($color: rgb(149, 221, 255), $alpha: 0) !important;
+  }
+  #id {
+    margin: auto;
+    padding-bottom: 0.25vw;
+    width: 40%;
+    color: white;
+    background-color: rgb(145, 38, 38);
+    font-weight: bold;
+    font-size: 2vw;
+    border-radius: 0 0 50px 50px;
+  }
+  #name {
+    font-size: 2em;
+  }
+  #category {
+    font-size: 1.5em;
+  }
+  p.card-text {
+    font-size: 1.25vw;
+      color: black;
+  }
+}

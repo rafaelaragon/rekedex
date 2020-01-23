@@ -1,0 +1,70 @@
+.ItemCategories {
+  .table {
+    padding-top: 4vh;
+  }
+  .table .nav {
+    display: inline-block;
+    width: 23.5vw;
+  }
+  ul {
+    width: 75vw;
+    text-align: center;
+    list-style-type: none;
+  }
+  .table li {
+    text-align: center;
+    font-size: 2vw;
+    display: inline-block;
+    width: 23.5vw;
+    background-color: rgb(230, 230, 166);
+    border: 1px solid black;
+  }
+  img {
+    background-color: rgb(186, 230, 99);
+    float: right;
+    clear: right;
+    width: 5vw;
+    height: 5vw;
+    border-left: 2px solid black;
+  }
+  span {
+    color: black;
+    display: inline-block;
+    margin-top: 1vw;
+    vertical-align: middle;
+    line-height: normal;
+  }
+  span#categories {
+    margin-top: 0;
+  }
+  span:hover {
+    font-weight: bold;
+  }
+
+  a.page-link {
+    width: 6vw;
+    height: 3vw;
+    color: rgb(145, 38, 38);
+    background-color: white;
+    margin: 0 -2.8vw !important;
+  }
+
+  span.page-link {
+    border: none;
+    width: 6vw;
+    height: 3vw;
+    margin: 0 -2.8vw !important;
+    background-color: rgb(145, 38, 38) !important;
+    color: white !important;
+  }
+  .pagination {
+    //text-align: center;
+    width: 56%;
+    margin-left: 6.5vw !important;
+  }
+  .pagination li {
+    border: none;
+    display: inline-block;
+    margin: 0vw 3vw;
+  }
+}

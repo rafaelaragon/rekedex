@@ -1,0 +1,40 @@
+.Header {
+  nav.navbar {
+    background-color: rgb(145, 38, 38);
+    padding: 0vh;
+    height: 8vh;
+  }
+  img.logo {
+    margin-top: -1vh;
+    width: 18vh;
+    margin-right: 5vw;
+    margin-left: -0.25vw;
+  }
+  a {
+    color: white;
+    margin: 0;
+    padding: 2vh 1vw;
+    height: 100%;
+  }
+  a.selected {
+    color: white;
+    font-weight: bold;
+    background-color: rgb(105, 0, 0);
+  }
+  a:hover {
+    color: white;
+    text-decoration: none;
+    font-weight: bolder;
+  }
+  a.dropdown-toggle.nav-link {
+    padding: .5vh;
+    
+  }
+  div.dropdown-menu.show {
+    margin: 0;
+    background-color: rgb(145, 38, 38);
+  }
+  a.dropdown-item:hover {
+    background-color: rgb(145, 38, 38);
+  }
+}

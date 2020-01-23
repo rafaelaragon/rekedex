@@ -1,0 +1,77 @@
+.Pokedex {
+  ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+  }
+
+  img.pokemon {
+    width: 20vw;
+    max-height: 20vw;
+  }
+  ul h1 {
+    /*background-image: (
+      linear-gradient(
+        to bottom,
+        rgba(193, 32, 38, 1) 85%,
+        rgba(193, 32, 38, 0) 100%
+      )
+    );
+    */
+    background-color: rgba(193, 32, 38, 1);
+    color: white;
+    font-size: 2.5vw;
+    padding: 0.5vh;
+  }
+  ul :hover h1 {
+    font-weight: bold;
+  }
+  ul li h2 {
+    color: black;
+    font-weight: bold;
+    font-size: 2vw;
+    margin-top: 2.75vw;
+  }
+  .pokemons .nav {
+    display: inline-block;
+    width: 22vw;
+    margin: 1vw 2vw;
+  }
+  .pokemons li {
+    overflow: hidden;
+    padding: 0;
+    display: inline-block;
+    width: 22vw;
+    min-height: 30vw;
+    max-height: 30vw;
+    background-image: url(../../assets/images/pokeball-background.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    border: 4px solid;
+    border-color: black;
+    border-radius: 1vw 5.5vw;
+  }
+
+  li a {
+    margin: auto;
+  }
+  a.page-link {
+    color: rgb(145, 38, 38);
+    background-color: white;
+    margin: 0 -2.8vw !important;
+  }
+  span.page-link {
+    border: none;
+    margin: 0 -2.8vw !important;
+    background-color: rgb(145, 38, 38) !important;
+    color: white !important;
+  }
+  .pagination {
+    width: 56%;
+    margin-left: 6.5vw !important;
+  }
+  .pagination li {
+    display: inline-block;
+    margin: 0vw 3vw;
+  }
+}
