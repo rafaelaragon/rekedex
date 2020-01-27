@@ -5,6 +5,8 @@ import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Arrow from "../../assets/images/arrow.png";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { addDefaultSrc, capitalize, pad } from "../../functions/functions";
 
 class Pokemon extends React.Component {
   constructor(props) {
@@ -42,26 +44,8 @@ class Pokemon extends React.Component {
     "https://pokeapi.co/api/v2/pokemon-species/" + this.pokemonName;
   //
 
-  //Add zeros to id
-  pad(n, width, z) {
-    z = z || "0";
-    n = n + "";
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-  }
-  //
-
-  addDefaultSrc(ev) {
-    ev.target.src =
-      "https://i.ya-webdesign.com/images/pixel-question-mark-png-5.png";
-  }
-
   toggleShiny = () => {
     this.setState({ isShiny: !this.state.isShiny });
-  };
-
-  capitalize = name => {
-    let result = name.charAt(0).toUpperCase() + name.slice(1);
-    return result;
   };
 
   remount = async () => {
@@ -164,9 +148,9 @@ class Pokemon extends React.Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return <LoadingSpinner/>;
     } else {
-      this.num = this.pad(id, 3);
+      this.num = pad(id, 3);
 
       return (
         <div className="Pokemon">
@@ -174,7 +158,7 @@ class Pokemon extends React.Component {
           {!isShiny ? (
             <img
               src={this.maleFront + id + ".png"}
-              onError={this.addDefaultSrc}
+              onError={addDefaultSrc}
               className="pokemon"
               alt={name}
             />
@@ -184,7 +168,7 @@ class Pokemon extends React.Component {
           {!isShiny ? (
             <img
               src={this.maleBack + id + ".png"}
-              onError={this.addDefaultSrc}
+              onError={addDefaultSrc}
               className="pokemon"
               alt={name}
             />
@@ -212,7 +196,7 @@ class Pokemon extends React.Component {
           {isShiny ? (
             <img
               src={this.maleFrontShiny + id + ".png"}
-              onError={this.addDefaultSrc}
+              onError={addDefaultSrc}
               className="pokemon"
               alt={name}
             />
@@ -222,7 +206,7 @@ class Pokemon extends React.Component {
           {isShiny ? (
             <img
               src={this.maleBackShiny + id + ".png"}
-              onError={this.addDefaultSrc}
+              onError={addDefaultSrc}
               className="pokemon"
               alt={name}
             />
@@ -251,7 +235,7 @@ class Pokemon extends React.Component {
             Shiny appearance
           </Button>
           <div className="details">
-            <h1 id="name">{!!name ? this.capitalize(name) : ""}</h1>
+            <h1 id="name">{!!name ? capitalize(name) : ""}</h1>
             <h2>{!!genera ? genera : ""}</h2>
             <Stats />
             <div className="types">
@@ -284,7 +268,7 @@ class Pokemon extends React.Component {
                             ability.ability.name
                           }
                         >
-                          {this.capitalize(ability.ability.name).replace(
+                          {capitalize(ability.ability.name).replace(
                             "-",
                             " "
                           )}
@@ -302,27 +286,27 @@ class Pokemon extends React.Component {
                     <li>
                       <h1>
                         {!!secondEv
-                          ? this.capitalize(firstEv)
+                          ? capitalize(firstEv)
                           : "This pokemon doesn't evolve"}
                       </h1>
                       {firstEv === name && !!secondEv ? (
                         <img
                           src={this.maleFront + id + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : secondEv === name ? (
                         <img
                           src={this.maleFront + (id - 1) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : thirdEv === name ? (
                         <img
                           src={this.maleFront + (id - 2) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
@@ -346,25 +330,25 @@ class Pokemon extends React.Component {
                     onClick={this.remount}
                   >
                     <li>
-                      <h1>{!!secondEv ? this.capitalize(secondEv) : ""}</h1>
+                      <h1>{!!secondEv ? capitalize(secondEv) : ""}</h1>
                       {secondEv === name ? (
                         <img
                           src={this.maleFront + id + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : firstEv === name && !!secondEv ? (
                         <img
                           src={this.maleFront + (id + 1) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : thirdEv === name ? (
                         <img
                           src={this.maleFront + (id - 1) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
@@ -388,25 +372,25 @@ class Pokemon extends React.Component {
                     onClick={this.remount}
                   >
                     <li>
-                      <h1>{!!thirdEv ? this.capitalize(thirdEv) : ""}</h1>
+                      <h1>{!!thirdEv ? capitalize(thirdEv) : ""}</h1>
                       {thirdEv === name && !!thirdEv ? (
                         <img
                           src={this.maleFront + id + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : secondEv === name && !!thirdEv ? (
                         <img
                           src={this.maleFront + (id + 1) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />
                       ) : firstEv === name && !!thirdEv ? (
                         <img
                           src={this.maleFront + (id + 2) + ".png"}
-                          onError={this.addDefaultSrc}
+                          onError={addDefaultSrc}
                           className="pokemon"
                           alt={name}
                         />

@@ -3,68 +3,38 @@ import "./Items.css";
 import Pagination from "react-bootstrap/Pagination";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { addDefaultSrc, capitalize } from "../../functions/functions";
+import { loadItems } from "../../redux/actions";
+import { connect } from "react-redux";
 
 class Items extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
       limit: 90,
-      offset: 0,
-      isLoaded: false,
-      items: []
+      offset: 0
     };
   }
 
   changePage = async num => {
-    let index = (num - 1) * this.state.limit;
+    const { limit } = this.state;
+    let index = (num - 1) * limit;
     if (index >= 0 && index < 900) {
-      // Nº de objetos
+      // Nº of objects
       await this.setState({ offset: index });
       this.index = 1;
-      this.loadItems();
+      this.props.loadItems(limit, this.state.offset);
     }
   };
 
-  addDefaultSrc(ev) {
-    ev.target.src =
-      "https://i.ya-webdesign.com/images/pixel-question-mark-png-5.png";
-  }
-  loadItems() {
-    fetch(
-      "https://pokeapi.co/api/v2/item/?limit=" +
-        this.state.limit +
-        "&offset=" +
-        this.state.offset
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          console.log(result);
-          this.setState({
-            isLoaded: true,
-            items: result.results
-          });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      );
-  }
-
-  capitalize = name => {
-    let result = name.charAt(0).toUpperCase() + name.slice(1);
-    return result;
-  };
-
   componentDidMount() {
-    this.loadItems();
+    const { limit, offset } = this.state;
+    this.props.loadItems(limit, offset);
   }
+
   render() {
-    const { error, isLoaded, items } = this.state;
+    const { itemsList, isLoaded } = this.props;
 
     //Pagination
     let pages = [];
@@ -92,40 +62,39 @@ class Items extends React.Component {
     pages.push(
       <Pagination.Next onClick={() => this.changePage(active + 1)} />,
       <Pagination.Last
-        onClick={() => this.changePage(Math.floor(900 / limit) )}
+        onClick={() => this.changePage(Math.floor(900 / limit))}
       />
     );
     //
 
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div className="loading">Loading...</div>;
+    if (!isLoaded) {
+      return <LoadingSpinner />;
     } else {
       return (
         <div className="Items">
           <div className="table">
             <ul>
-              {items.map(item =>
+              {itemsList.map(item =>
                 !item.name.includes("--") &&
                 !item.name.includes("memory") &&
                 !item.name.includes("evon-scuba-gear") ? (
-                  
-                <Nav>
-                <NavLink to={"/item/" + item.name + "/"}>
-                  <li>
-                    <span id="item">{this.capitalize(item.name).replace("-", " ")}</span>
-                    <img
-                      src={
-                        "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/" +
-                        item.name +
-                        ".png"
-                      }
-                      alt=""
-                      onError={this.addDefaultSrc}
-                    ></img>
-                  </li>
-                  </NavLink>
+                  <Nav>
+                    <NavLink to={"/item/" + item.name + "/"}>
+                      <li>
+                        <span id="item">
+                          {capitalize(item.name).replace("-", " ")}
+                        </span>
+                        <img
+                          src={
+                            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/" +
+                            item.name +
+                            ".png"
+                          }
+                          alt=""
+                          onError={addDefaultSrc}
+                        ></img>
+                      </li>
+                    </NavLink>
                   </Nav>
                 ) : (
                   ""
@@ -142,4 +111,13 @@ class Items extends React.Component {
   }
 }
 
-export default Items;
+function mapState(state) {
+  return {
+    itemsList: state.itemsListReducer.itemsList,
+    isLoaded: state.itemsListReducer.isLoaded
+  };
+}
+
+const mapDispatch = { loadItems };
+
+export default connect(mapState, mapDispatch)(Items);

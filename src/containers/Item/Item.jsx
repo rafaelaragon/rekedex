@@ -4,6 +4,8 @@ import Card from "react-bootstrap/Card";
 import pokeDollar from "../../assets/images/PokémonDollar.png";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { addDefaultSrc, capitalize, pad } from "../../functions/functions";
 
 class Item extends React.Component {
   constructor(props) {
@@ -19,19 +21,6 @@ class Item extends React.Component {
   queryString = window.location.pathname;
   item = this.queryString.substring(6);
   api = "https://pokeapi.co/api/v2/item/" + this.item;
-
-  //Add zeros to id
-  pad(n, width, z) {
-    z = z || "0";
-    n = n + "";
-    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-  }
-  //
-
-  addDefaultSrc(ev) {
-    ev.target.src =
-      "https://i.ya-webdesign.com/images/pixel-question-mark-png-5.png";
-  }
 
   loadItem() {
     fetch(this.api)
@@ -59,11 +48,6 @@ class Item extends React.Component {
       );
   }
 
-  capitalize = name => {
-    let result = name.charAt(0).toUpperCase() + name.slice(1);
-    return result;
-  };
-
   componentDidMount() {
     this.loadItem();
   }
@@ -72,19 +56,19 @@ class Item extends React.Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return <LoadingSpinner />;
     } else {
       return (
         <div className="Item">
           <Card style={{ width: "30vw" }}>
-            <Card.Header id="id">Nº{this.pad(id, 3)}</Card.Header>
-            <Card.Img variant="top" src={img} />
+            <Card.Header id="id">Nº{pad(id, 3)}</Card.Header>
+            <Card.Img variant="top" src={img} onError={addDefaultSrc} />
             <Card.Body>
               <Card.Title id="name">{name}</Card.Title>
               <Card.Title id="category">
                 <Nav>
                   <NavLink to={"/items/categories/" + category + "/"}>
-                    {this.capitalize(category).replace("-", " ")}
+                    {capitalize(category).replace("-", " ")}
                   </NavLink>
                 </Nav>
               </Card.Title>

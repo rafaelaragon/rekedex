@@ -27,13 +27,13 @@ class Header extends Component {
           <Navbar.Brand target="_blank" href="https://github.com/rafaelaragon">
             <img src={logo} className="logo" alt="Rekedex" />
           </Navbar.Brand>
-          <NavLink to="/home" activeClassName="selected">
+          <NavLink to="/home" activeClassName="selected" id="home">
             Home
           </NavLink>
-          <NavLink to="/pokedex" activeClassName="selected">
+          <NavLink to="/pokedex" activeClassName="selected" id="pokedex">
             Pokedex
           </NavLink>
-          <NavLink to="/items/" activeClassName="selected">
+          <NavLink to="/items/" activeClassName="selected" id="items">
             <NavDropdown title="Items">
               <NavDropdown.Item href="/items/">
                 <NavLink to="/items/">Item List</NavLink>

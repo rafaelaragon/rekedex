@@ -1,67 +1,41 @@
 import React from "react";
 import "./Pokedex.css";
 import Pagination from "react-bootstrap/Pagination";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import { loadPokemons } from "../../redux/actions";
+import { connect } from "react-redux";
+import { addDefaultSrc, capitalize } from "../../functions/functions";
 
-//(Hay 964 pokemons, de los cuales, 809 tienen imagen)
+//(Hay 964 pokemons, de los cuales, 810 tienen imagen)
 class Pokedex extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
       limit: 9,
-      offset: 0,
-      isLoaded: false,
-      items: []
+      offset: 0
     };
   }
 
   changePage = async num => {
-    let index = (num - 1) * this.state.limit;
+    const { limit } = this.state;
+    let index = (num - 1) * limit;
     if (index >= 0 && index < 809) {
-      // Nº de pokémons
+      // Nº of pokémons
       await this.setState({ offset: index });
       this.index = 1;
-      this.loadPokemons();
+      this.props.loadPokemons(limit, this.state.offset);
     }
   };
-  loadPokemons() {
-    fetch(
-      "https://pokeapi.co/api/v2/pokemon/?limit=" +
-        this.state.limit +
-        "&offset=" +
-        this.state.offset
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            isLoaded: true,
-            items: result.results
-          });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      );
-  }
-
-  addDefaultSrc(ev) {
-    ev.target.src =
-      "https://i.ya-webdesign.com/images/pixel-question-mark-png-5.png";
-  }
 
   index = 1;
   componentDidMount() {
-    this.loadPokemons();
+    const { limit, offset } = this.state;
+    this.props.loadPokemons(limit, offset);
   }
   render() {
-    this.index = 1;
-    const { error, isLoaded, items } = this.state;
+    const { pokemonsList, isLoaded } = this.props;
 
     //Pagination
     let pages = [];
@@ -92,32 +66,30 @@ class Pokedex extends React.Component {
         onClick={() => this.changePage(Math.floor(809 / limit) + 1)}
       />
     );
-    //
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
+    //END Pagination
+
+    if (!isLoaded) {
+      return <LoadingSpinner />;
     } else {
+      this.index = 1;
       return (
         <div className="Pokedex">
           <div className="pokemons">
             <ul>
-              {items.map(item => (
+              {pokemonsList.map(item => (
                 <Nav>
                   <NavLink to={"pokemon/" + item.name + "/"}>
                     <li>
-                      <h1>
-                        {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-                      </h1>
+                      <h1>{capitalize(item.name)}</h1>
                       <img
                         src={
                           "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
                           (this.state.offset + this.index < 808
                             ? this.state.offset + this.index
-                            : this.state.offset + this.index + 9193) +
+                            : this.state.offset + this.index + 9193) + //Deoxys
                           ".png"
                         }
-                        onError={this.addDefaultSrc}
+                        onError={addDefaultSrc}
                         className="pokemon"
                         alt={item.name}
                       />
@@ -137,4 +109,13 @@ class Pokedex extends React.Component {
   }
 }
 
-export default Pokedex;
+function mapState(state) {
+  return {
+    pokemonsList: state.pokemonsListReducer.pokemonsList,
+    isLoaded: state.pokemonsListReducer.isLoaded
+  };
+}
+
+const mapDispatch = { loadPokemons };
+
+export default connect(mapState, mapDispatch)(Pokedex);

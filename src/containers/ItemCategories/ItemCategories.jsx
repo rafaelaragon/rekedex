@@ -2,6 +2,7 @@ import React from "react";
 import "./ItemCategories.css";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import { addDefaultSrc, capitalize } from "../../functions/functions";
 
 class ItemCategories extends React.Component {
   constructor(props) {
@@ -31,10 +32,6 @@ class ItemCategories extends React.Component {
     }
   };
 
-  addDefaultSrc(ev) {
-    ev.target.src =
-      "https://i.ya-webdesign.com/images/pixel-question-mark-png-5.png";
-  }
   loadItems() {
     fetch(
       !!this.api
@@ -59,10 +56,6 @@ class ItemCategories extends React.Component {
       );
   }
 
-  capitalize = name => {
-    let result = name.charAt(0).toUpperCase() + name.slice(1);
-    return result;
-  };
   remount = async () => {
     await this.setState({
       timesMounted: this.state.timesMounted + 1
@@ -106,7 +99,7 @@ class ItemCategories extends React.Component {
                               : ""
                           }
                         >
-                          {this.capitalize(item.name).replace("-", " ")}
+                          {capitalize(item.name).replace("-", " ")}
                         </span>
                         {!item.url.includes("item-category") ? (
                           <img
@@ -116,7 +109,7 @@ class ItemCategories extends React.Component {
                               ".png"
                             }
                             alt=""
-                            onError={this.addDefaultSrc}
+                            onError={addDefaultSrc}
                           ></img>
                         ) : (
                           ""
