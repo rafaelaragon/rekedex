@@ -3,6 +3,7 @@ import "./ItemCategories.css";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
 import { addDefaultSrc, capitalize } from "../../functions/functions";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 class ItemCategories extends React.Component {
   constructor(props) {
@@ -32,6 +33,13 @@ class ItemCategories extends React.Component {
     }
   };
 
+  remount = async () => {
+    await this.setState({
+      timesMounted: this.state.timesMounted + 1
+    });
+    window.location.reload();
+  };
+
   loadItems() {
     fetch(
       !!this.api
@@ -56,23 +64,14 @@ class ItemCategories extends React.Component {
       );
   }
 
-  remount = async () => {
-    await this.setState({
-      timesMounted: this.state.timesMounted + 1
-    });
-    window.location.reload();
-  };
-
   componentDidMount() {
     this.loadItems();
   }
   render() {
-    const { error, isLoaded, items } = this.state;
+    const { isLoaded, items } = this.state;
 
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
+    if (!isLoaded) {
+      return <LoadingSpinner />;
     } else {
       return (
         <div className="ItemCategories">
@@ -89,9 +88,12 @@ class ItemCategories extends React.Component {
                           ? "/item/" + item.name + "/"
                           : "/items/categories/" + item.name + "/"
                       }
-                      onClick={this.remount}
                     >
-                      <li>
+                      <li onClick={this.remount}
+                        id={
+                          item.url.includes("item-category") ? "categories" : ""
+                        }
+                      >
                         <span
                           id={
                             item.url.includes("item-category")

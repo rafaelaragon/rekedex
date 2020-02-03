@@ -6,16 +6,31 @@ class Home extends React.Component {
   render() {
     return (
       <div className="Home">
-        <h1><img src={logo} className="logo" alt="Rekedex" /></h1>
+        <h1>
+          <img src={logo} className="logo" alt="Rekedex" />
+        </h1>
         <p>
           <ul>
-            <h2>Known issues:</h2>
-            <li>The evolution chains of the pokemons whose evolutions were added in different generations are wrong (e.g. Pikachu)</li>
-            <li>Pagination style must be fixed</li>
-            <li>Moves is not complete</li>
+            <h2>
+              This project was made to learn react basics and redux.{" "}
+              <h3>Packages used:</h3>
+            </h2>
+            <li>react-bootstrap</li>
+            <li>node-sass</li>
+            <li>react-router-dom</li>
+            <li>recharts</li>
+            <li>redux</li>
+            <li>redux-thunk</li>
           </ul>
-          <br/>
-          Api: <a target="_blank" rel="noopener noreferrer" href="https://pokeapi.co/">Pokeapi(v2)</a>
+          <br />
+          Api:{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://pokeapi.co/"
+          >
+            Pokeapi(v2)
+          </a>
         </p>
       </div>
     );

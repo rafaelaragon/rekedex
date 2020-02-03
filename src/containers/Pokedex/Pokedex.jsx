@@ -4,9 +4,9 @@ import Pagination from "react-bootstrap/Pagination";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
+import { addDefaultSrc, capitalize } from "../../functions/functions";
 import { loadPokemons } from "../../redux/actions";
 import { connect } from "react-redux";
-import { addDefaultSrc, capitalize } from "../../functions/functions";
 
 //(Hay 964 pokemons, de los cuales, 810 tienen imagen)
 class Pokedex extends React.Component {
@@ -19,6 +19,7 @@ class Pokedex extends React.Component {
   }
 
   changePage = async num => {
+    
     const { limit } = this.state;
     let index = (num - 1) * limit;
     if (index >= 0 && index < 809) {
@@ -35,7 +36,7 @@ class Pokedex extends React.Component {
     this.props.loadPokemons(limit, offset);
   }
   render() {
-    const { pokemonsList, isLoaded } = this.props;
+    const { pokemonsList, isLoaded, page } = this.props;
 
     //Pagination
     let pages = [];
@@ -76,7 +77,7 @@ class Pokedex extends React.Component {
         <div className="Pokedex">
           <div className="pokemons">
             <ul>
-              {pokemonsList.map(item => (
+              {pokemonsList[page].map(item => (
                 <Nav>
                   <NavLink to={"pokemon/" + item.name + "/"}>
                     <li>
@@ -109,8 +110,10 @@ class Pokedex extends React.Component {
   }
 }
 
+//Redux
 function mapState(state) {
   return {
+    page: state.pokemonsListReducer.page,
     pokemonsList: state.pokemonsListReducer.pokemonsList,
     isLoaded: state.pokemonsListReducer.isLoaded
   };

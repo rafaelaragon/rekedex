@@ -6,13 +6,13 @@ import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { addDefaultSrc, capitalize, pad } from "../../functions/functions";
+import { loadItem } from "../../redux/actions";
+import { connect } from "react-redux";
 
 class Item extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      isLoaded: false,
       items: []
     };
   }
@@ -22,7 +22,7 @@ class Item extends React.Component {
   item = this.queryString.substring(6);
   api = "https://pokeapi.co/api/v2/item/" + this.item;
 
-  loadItem() {
+  /*
     fetch(this.api)
       .then(res => res.json())
       .then(
@@ -38,50 +38,49 @@ class Item extends React.Component {
             desc: result.effect_entries[0].effect,
             cost: result.cost
           });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
         }
-      );
+      );*/
+  componentDidMount() {
+    this.props.loadItem(this.item);
   }
 
-  componentDidMount() {
-    this.loadItem();
-  }
   render() {
-    const { error, isLoaded, id, img, name, category, desc, cost } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
+    const { isLoaded, item, id } = this.props;
+    if (!isLoaded) {
       return <LoadingSpinner />;
     } else {
       return (
         <div className="Item">
           <Card style={{ width: "30vw" }}>
-            <Card.Header id="id">Nº{pad(id, 3)}</Card.Header>
-            <Card.Img variant="top" src={img} onError={addDefaultSrc} />
+            <Card.Header id="id">Nº{pad(this.props.id, 3)}</Card.Header>
+            <Card.Img
+              variant="top"
+              src={item[id].sprites.default}
+              onError={addDefaultSrc}
+            />
             <Card.Body>
-              <Card.Title id="name">{name}</Card.Title>
+              <Card.Title id="name">{capitalize(item[id].name).replace("-", " ")}</Card.Title>
               <Card.Title id="category">
                 <Nav>
-                  <NavLink to={"/items/categories/" + category + "/"}>
-                    {capitalize(category).replace("-", " ")}
+                  <NavLink
+                    to={"/items/categories/" + item[id].category.url + "/"}
+                  >
+                    {capitalize(item[id].category.name).replace("-", " ")}
                   </NavLink>
                 </Nav>
               </Card.Title>
               <Card.Text id="desc">
-                {!!cost && cost !== 0 ? "Cost: " + cost : "Cannot be bought"}
-                {!!cost && cost !== 0 ? (
+                {!!item[id].cost && item[id].cost !== 0
+                  ? "Cost: " + item[id].cost
+                  : "Cannot be bought"}
+                {!!item[id].cost && item[id].cost !== 0 ? (
                   <img id="pokedollar" src={pokeDollar} alt="PokéDollars"></img>
                 ) : (
                   ""
                 )}
                 <br />
                 <br />
-                {desc}
+                {item[id].effect_entries[0].effect}
               </Card.Text>
             </Card.Body>
           </Card>
@@ -91,4 +90,15 @@ class Item extends React.Component {
   }
 }
 
-export default Item;
+//Redux
+function mapState(state) {
+  return {
+    id: state.itemReducer.id,
+    item: state.itemReducer.item,
+    isLoaded: state.itemReducer.isLoaded
+  };
+}
+
+const mapDispatch = { loadItem };
+
+export default connect(mapState, mapDispatch)(Item);

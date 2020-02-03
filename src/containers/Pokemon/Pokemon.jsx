@@ -2,17 +2,22 @@ import React from "react";
 import "./Pokemon.css";
 import Stats from "../../components/Stats/Stats";
 import Nav from "react-bootstrap/Nav";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Arrow from "../../assets/images/arrow.png";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { addDefaultSrc, capitalize, pad } from "../../functions/functions";
+import {
+  loadPokemon,
+  loadPokemonDetails,
+  loadPokemonEvolutionChain
+} from "../../redux/actions";
+import { connect } from "react-redux";
 
 class Pokemon extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
       isLoaded: false,
       items: [],
       timesMounted: 1
@@ -36,17 +41,11 @@ class Pokemon extends React.Component {
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/female/";
   femaleBackShiny =
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/female/";
+
   //Datos del pokemon para llamar a la api
   queryString = window.location.pathname;
   pokemonName = this.queryString.substring(9);
-  api = "https://pokeapi.co/api/v2/pokemon/" + this.pokemonName;
-  pokemonDetailsApi =
-    "https://pokeapi.co/api/v2/pokemon-species/" + this.pokemonName;
   //
-
-  toggleShiny = () => {
-    this.setState({ isShiny: !this.state.isShiny });
-  };
 
   remount = async () => {
     await this.setState({
@@ -55,211 +54,150 @@ class Pokemon extends React.Component {
     window.location.reload();
   };
 
-  componentDidMount() {
-    fetch(this.api)
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            isLoaded: true,
-            id: result.id,
-            isShiny: false,
-            name: result.name,
-            types: result.types,
-            height: result.height,
-            weight: result.weight,
-            abilities: result.abilities,
-            hasGenderDifferences: result.sprites.front_female
-          });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
+  toggleShiny = () => {
+    this.setState({ isShiny: !this.state.isShiny });
+  };
+
+  addImages = (type, id, name) => {
+    return (
+      <img
+        src={type + id + ".png"}
+        onError={addDefaultSrc}
+        className="pokemon"
+        alt={name}
+      />
+    );
+  };
+
+  getData = () => {
+    Promise.all([
+      this.props.loadPokemon(this.pokemonName),
+      this.props.loadPokemonDetails(this.pokemonName)
+    ]).then(() => {
+      this.props.loadPokemonEvolutionChain(
+        this.props.pokemonDetails[this.props.id].evolution_chain.url
       );
-    fetch(this.pokemonDetailsApi)
-      .then(res => res.json())
-      .then(result => {
-        let text = result.flavor_text_entries.filter(
-          lan => lan.language.name === "en"
-        );
-        this.setState({
-          genera: result.genera[2].genus,
-          description: text[0].flavor_text,
-          evolutions: result.evolution_chain.url,
-          firstEv: "",
-          firstImg: "",
-          secondEv: "",
-          secondImg: "",
-          thirdEv: "",
-          thirdImg: ""
-        });
-      });
+    });
+  };
+
+  componentDidMount() {
+    this.getData();
   }
 
-  num = 0;
-  first = "";
-  firstImg = "";
-  second = "";
-  secondImg = "";
-  third = "";
-  thirdImg = "";
   render() {
-    fetch(this.state.evolutions)
-      .then(res => res.json())
-      .then(result => {
-        if (result.chain.species.name !== undefined) {
-          this.first = result.chain.species.name;
-        }
-        if (result.chain.evolves_to[0] !== undefined) {
-          this.second = result.chain.evolves_to[0].species.name;
-          if (result.chain.evolves_to[0].evolves_to[0] !== undefined) {
-            this.third = result.chain.evolves_to[0].evolves_to[0].species.name;
-          }
-        }
-        this.setState({
-          firstEv: this.first,
-          firstImg: this.firstImg,
-          secondEv: this.second,
-          secondImg: this.secondImg,
-          thirdEv: this.third,
-          thirdImg: this.thirdImg
-        });
-      });
-    const {
-      error,
-      isLoaded,
-      hasGenderDifferences,
-      name,
-      genera,
-      id,
-      isShiny,
-      types,
-      height,
-      weight,
-      description,
-      abilities,
-      firstEv,
-      secondEv,
-      thirdEv
-    } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <LoadingSpinner/>;
+    const { isShiny } = this.state;
+
+    const { pokemon, pokemonDetails, isLoaded, id } = this.props;
+    const { firstEv, secondEv, thirdEv } = this.props;
+
+    //const firstEv = this.props.pokemonEvolutionChain[this.props.id];
+
+    if (!isLoaded) {
+      return <LoadingSpinner />;
     } else {
       this.num = pad(id, 3);
 
       return (
         <div className="Pokemon">
+          {/*Images*/}
           <h2 id="id">N.º{!!id && id < 10001 ? this.num : this.num - 9193}</h2>
-          {!isShiny ? (
-            <img
-              src={this.maleFront + id + ".png"}
-              onError={addDefaultSrc}
-              className="pokemon"
-              alt={name}
-            />
-          ) : (
-            ""
-          )}
-          {!isShiny ? (
-            <img
-              src={this.maleBack + id + ".png"}
-              onError={addDefaultSrc}
-              className="pokemon"
-              alt={name}
-            />
-          ) : (
-            ""
-          )}
-          {!isShiny && hasGenderDifferences ? (
-            <img
-              src={this.femaleFront + id + ".png"}
-              className="pokemon"
-              alt={""}
-            />
-          ) : (
-            ""
-          )}
-          {!isShiny && hasGenderDifferences ? (
-            <img
-              src={this.femaleBack + id + ".png"}
-              className="pokemon"
-              alt={""}
-            />
-          ) : (
-            ""
-          )}
-          {isShiny ? (
-            <img
-              src={this.maleFrontShiny + id + ".png"}
-              onError={addDefaultSrc}
-              className="pokemon"
-              alt={name}
-            />
-          ) : (
-            ""
-          )}
-          {isShiny ? (
-            <img
-              src={this.maleBackShiny + id + ".png"}
-              onError={addDefaultSrc}
-              className="pokemon"
-              alt={name}
-            />
-          ) : (
-            ""
-          )}
-          {isShiny && hasGenderDifferences ? (
-            <img
-              src={this.femaleFrontShiny + id + ".png"}
-              className="pokemon"
-              alt={""}
-            />
-          ) : (
-            ""
-          )}
-          {isShiny && hasGenderDifferences ? (
-            <img
-              src={this.femaleBackShiny + id + ".png"}
-              className="pokemon"
-              alt={""}
-            />
-          ) : (
-            ""
-          )}
+          {!isShiny ? this.addImages(this.maleFront, id, pokemon[id].name) : ""}
+          {!isShiny ? this.addImages(this.maleBack, id, pokemon[id].name) : ""}
+          {!isShiny && !!pokemon.sprites //.front_female
+            ? this.addImages(this.femaleFront, id, pokemon[id].name)
+            : ""}
+          {!isShiny && !!pokemon.sprites //.back_female
+            ? this.addImages(this.femaleBack, id, pokemon[id].name)
+            : ""}
+          {isShiny
+            ? this.addImages(this.maleFrontShiny, id, pokemon[id].name)
+            : ""}
+          {isShiny
+            ? this.addImages(this.maleBackShiny, id, pokemon[id].name)
+            : ""}
+          {isShiny && !!pokemon.sprites //.front_shiny_female
+            ? this.addImages(this.femaleFrontShiny, id, pokemon[id].name)
+            : ""}
+          {isShiny && !!pokemon.sprites //.back_shiny_female
+            ? this.addImages(this.femaleBackShiny, id, pokemon[id].name)
+            : ""}
+
+          {/*Button that toggles shiny images from pokemons*/}
           <Button variant="danger" onClick={this.toggleShiny}>
             Shiny appearance
           </Button>
+
+          {/*Details (name, description, stats, height & weight)*/}
           <div className="details">
-            <h1 id="name">{!!name ? capitalize(name) : ""}</h1>
-            <h2>{!!genera ? genera : ""}</h2>
+            <h1 id="name">
+              <Link
+                to={
+                  "/pokemon/" +
+                  (id > 1 ? (id !== 10001 ? id - 1 : 807) : id) +
+                  "/"
+                }
+              >
+                <img
+                  onClick={this.remount}
+                  className="arrow prev"
+                  src={Arrow}
+                  alt="arrow"
+                ></img>
+              </Link>
+
+              {!!pokemon[id].name
+                ? " " + capitalize(pokemon[id].name) + " "
+                : ""}
+
+              <Link to={"/pokemon/" + (id !== 807 ? id + 1 : 10001) + "/"}>
+                <img
+                  onClick={this.remount}
+                  className="arrow next"
+                  src={Arrow}
+                  alt="arrow"
+                ></img>
+              </Link>
+            </h1>
+            <h2>
+              {!!pokemonDetails[id] ? pokemonDetails[id].genera[2].genus : ""}
+            </h2>
             <Stats />
             <div className="types">
-              {!!types
-                ? types.map(type => (
+              {!!pokemon[id].types
+                ? pokemon[id].types.map(type => (
                     <span id={type.type.name}>{type.type.name}</span>
                   ))
                 : ""}
             </div>
-            <p>{!!description ? description : ""}</p>
+            <p>
+              {!!pokemonDetails[id]
+                ? pokemonDetails[id].flavor_text_entries.filter(
+                    lan => lan.language.name === "en"
+                  )[0].flavor_text
+                : ""}
+            </p>
             <span>
               Height:
-              <span className="info"> {!!height ? height / 10 : ""} m </span>
+              <span className="info">
+                {" "}
+                {!!pokemon[id].height ? pokemon[id].height / 10 : ""} m{" "}
+              </span>
             </span>
             <span>
               Weight:
-              <span className="info"> {!!weight ? weight / 10 : ""} kg </span>
+              <span className="info">
+                {" "}
+                {!!pokemon[id].weight ? pokemon[id].weight / 10 : ""} kg{" "}
+              </span>
             </span>
+
+            {/*Abilities*/}
             <div className="abilities">
               <br />
               <h1>Abilities</h1>
               <span className="info">
-                {!!abilities
-                  ? abilities.map(ability => (
+                {!!pokemon[id].abilities
+                  ? pokemon[id].abilities.map(ability => (
                       <div>
                         <a
                           target="_blank"
@@ -268,15 +206,14 @@ class Pokemon extends React.Component {
                             ability.ability.name
                           }
                         >
-                          {capitalize(ability.ability.name).replace(
-                            "-",
-                            " "
-                          )}
+                          {capitalize(ability.ability.name).replace("-", " ")}
                         </a>
                       </div>
                     ))
                   : ""}
               </span>
+
+              {/*Evolution chain*/}
               <ul>
                 <Nav>
                   <NavLink
@@ -284,35 +221,26 @@ class Pokemon extends React.Component {
                     onClick={this.remount}
                   >
                     <li>
-                      <h1>
+                      <h1 id={!!secondEv ? "" : "not-evol"}>
                         {!!secondEv
                           ? capitalize(firstEv)
                           : "This pokemon doesn't evolve"}
                       </h1>
-                      {firstEv === name && !!secondEv ? (
-                        <img
-                          src={this.maleFront + id + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : secondEv === name ? (
-                        <img
-                          src={this.maleFront + (id - 1) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : thirdEv === name ? (
-                        <img
-                          src={this.maleFront + (id - 2) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : (
-                        ""
-                      )}
+                      {firstEv === pokemon[id].name && !!secondEv
+                        ? this.addImages(this.maleFront, id, pokemon[id].name)
+                        : secondEv === pokemon[id].name
+                        ? this.addImages(
+                            this.maleFront,
+                            id - 1,
+                            pokemon[id].name
+                          )
+                        : thirdEv === pokemon[id].name
+                        ? this.addImages(
+                            this.maleFront,
+                            id - 2,
+                            pokemon[id].name
+                          )
+                        : ""}
                     </li>
                   </NavLink>
                 </Nav>
@@ -331,30 +259,21 @@ class Pokemon extends React.Component {
                   >
                     <li>
                       <h1>{!!secondEv ? capitalize(secondEv) : ""}</h1>
-                      {secondEv === name ? (
-                        <img
-                          src={this.maleFront + id + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : firstEv === name && !!secondEv ? (
-                        <img
-                          src={this.maleFront + (id + 1) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : thirdEv === name ? (
-                        <img
-                          src={this.maleFront + (id - 1) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : (
-                        ""
-                      )}
+                      {secondEv === pokemon[id].name
+                        ? this.addImages(this.maleFront, id, pokemon[id].name)
+                        : firstEv === pokemon[id].name && !!secondEv
+                        ? this.addImages(
+                            this.maleFront,
+                            id + 1,
+                            pokemon[id].name
+                          )
+                        : thirdEv === pokemon[id].name
+                        ? this.addImages(
+                            this.maleFront,
+                            id - 1,
+                            pokemon[id].name
+                          )
+                        : ""}
                     </li>
                   </NavLink>
                 </Nav>
@@ -371,32 +290,23 @@ class Pokemon extends React.Component {
                     to={"/pokemon/" + thirdEv + "/"}
                     onClick={this.remount}
                   >
-                    <li>
+                    <li style={!!thirdEv ? {} : { display: "none" }}>
                       <h1>{!!thirdEv ? capitalize(thirdEv) : ""}</h1>
-                      {thirdEv === name && !!thirdEv ? (
-                        <img
-                          src={this.maleFront + id + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : secondEv === name && !!thirdEv ? (
-                        <img
-                          src={this.maleFront + (id + 1) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : firstEv === name && !!thirdEv ? (
-                        <img
-                          src={this.maleFront + (id + 2) + ".png"}
-                          onError={addDefaultSrc}
-                          className="pokemon"
-                          alt={name}
-                        />
-                      ) : (
-                        ""
-                      )}
+                      {thirdEv === pokemon[id].name && !!thirdEv
+                        ? this.addImages(this.maleFront, id, pokemon[id].name)
+                        : secondEv === pokemon[id].name && !!thirdEv
+                        ? this.addImages(
+                            this.maleFront,
+                            id + 1,
+                            pokemon[id].name
+                          )
+                        : firstEv === pokemon[id].name && !!thirdEv
+                        ? this.addImages(
+                            this.maleFront,
+                            id + 2,
+                            pokemon[id].name
+                          )
+                        : ""}
                     </li>
                   </NavLink>
                 </Nav>
@@ -409,4 +319,24 @@ class Pokemon extends React.Component {
   }
 }
 
-export default Pokemon;
+//Redux
+function mapState(state) {
+  return {
+    id: state.pokemonReducer.id,
+    pokemon: state.pokemonReducer.pokemon,
+    pokemonDetails: state.pokemonDetailsReducer.pokemonDetails,
+    pokemonEvolutionChain:
+      state.pokemonEvolutionChainReducer.pokemonEvolutionChain,
+    firstEv: state.pokemonEvolutionChainReducer.firstEv,
+    secondEv: state.pokemonEvolutionChainReducer.secondEv,
+    thirdEv: state.pokemonEvolutionChainReducer.thirdEv,
+    isLoaded: state.pokemonReducer.isLoaded
+  };
+}
+const mapDispatch = {
+  loadPokemon,
+  loadPokemonDetails,
+  loadPokemonEvolutionChain
+};
+
+export default connect(mapState, mapDispatch)(Pokemon);

@@ -34,7 +34,7 @@ class Items extends React.Component {
   }
 
   render() {
-    const { itemsList, isLoaded } = this.props;
+    const { itemsList, isLoaded, page } = this.props;
 
     //Pagination
     let pages = [];
@@ -74,7 +74,7 @@ class Items extends React.Component {
         <div className="Items">
           <div className="table">
             <ul>
-              {itemsList.map(item =>
+              {itemsList[page].map(item =>
                 !item.name.includes("--") &&
                 !item.name.includes("memory") &&
                 !item.name.includes("evon-scuba-gear") ? (
@@ -111,8 +111,10 @@ class Items extends React.Component {
   }
 }
 
+//Redux
 function mapState(state) {
   return {
+    page: state.itemsListReducer.page,
     itemsList: state.itemsListReducer.itemsList,
     isLoaded: state.itemsListReducer.isLoaded
   };

@@ -5,11 +5,7 @@ class Moves extends React.Component {
   render() {
     return (
       <div className="Moves">
-        <p>
-          WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
-          WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
-          WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP
-        </p>
+        <h1>Soon...</h1>
       </div>
     );
   }

@@ -7,6 +7,9 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis
 } from "recharts";
+import { loadStats } from "../../redux/actions";
+import { connect } from "react-redux";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 class Stats extends Component {
   constructor(props) {
@@ -21,70 +24,52 @@ class Stats extends Component {
   //Datos del pokemon para llamar a la api
   queryString = window.location.pathname;
   pokemonName = this.queryString.substring(9);
-  api = "https://pokeapi.co/api/v2/pokemon/" + this.pokemonName;
 
   componentDidMount() {
-    fetch(this.api)
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            isLoaded: true,
-            id: result.id,
-            stats: result.stats
-          });
-        },
-        error => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      );
+    this.props.loadStats(this.pokemonName);
   }
 
   //FiddleUrl for chart
   static jsfiddleUrl = "https://jsfiddle.net/alidingling/6ebcxbx4/";
 
   render() {
-    const { error, isLoaded, stats } = this.state;
-    if (error) {
-      return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
+    const { isLoaded, speed, spDef, spAtt, defense, attack, health } = this.props;
+    if (!isLoaded) {
+      return <LoadingSpinner />;
     } else {
       const data = [
         {
           subject: "HP",
-          A: stats[5].base_stat,
+          A: health,
           fullMark: 255
         },
         {
           subject: "Defense",
-          A: stats[3].base_stat,
+          A: defense,
           fullMark: 250
         },
         {
           subject: "SP. Def",
-          A: stats[1].base_stat,
+          A: spDef,
           fullMark: 250
         },
         {
           subject: "Speed",
-          A: stats[0].base_stat,
+          A: speed,
           fullMark: 180
         },
         {
           subject: "Sp. Att",
-          A: stats[2].base_stat,
+          A: spAtt,
           fullMark: 194
         },
         {
           subject: "Attack",
-          A: stats[4].base_stat,
+          A: attack,
           fullMark: 190
         }
       ];
+
       return (
         <div className="Stats">
           <RadarChart
@@ -98,12 +83,13 @@ class Stats extends Component {
             <PolarGrid />
             <PolarAngleAxis dataKey="subject" />
             <PolarRadiusAxis />
+
             <Radar
               name="Stat"
               dataKey="A"
               stroke="#000000"
-              fill="#ffff00"
-              fillOpacity={0.6}
+              fill="#b03838"
+              fillOpacity={0.8}
             />
           </RadarChart>
         </div>
@@ -112,4 +98,20 @@ class Stats extends Component {
   }
 }
 
-export default Stats;
+//Redux
+function mapState(state) {
+  return {
+    stats: state.statsReducer.stats,
+    speed: state.statsReducer.speed,
+    spDef: state.statsReducer.spDef,
+    spAtt: state.statsReducer.spAtt,
+    defense: state.statsReducer.defense,
+    attack: state.statsReducer.attack,
+    health: state.statsReducer.health,
+    isLoaded: state.statsReducer.isLoaded
+  };
+}
+
+const mapDispatch = { loadStats };
+
+export default connect(mapState, mapDispatch)(Stats);

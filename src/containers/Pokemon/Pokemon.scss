@@ -3,6 +3,7 @@
   margin: 0 5vw;
   padding-bottom: 1vw;
   background-color: rgba(0, 221, 255, 0.25);
+  border-radius: 0 0 50vh 50vh;
   h2#id {
     width: 20vh;
     margin: 0;
@@ -51,43 +52,63 @@
     display: inline-block;
   }
   ul {
+    padding-top: 2vh;
     margin: 0;
+    background-color: rgba(0, 221, 255, .15);
+    border-radius: 0 0 10vh 10vh;
   }
   li {
+    width: 12vw;
     list-style-type: none;
     display: inline-block;
   }
   #name {
-    
     color: white;
   }
   li h1 {
+    font-size: 2vw;
     font-weight: bold;
   }
+
+  h1#not-evol {
+    width: 27.5vw;
+    margin-bottom: 3vh;
+  }
   li img {
-    width: 15vw;
-    height: 15vw;
+    width: 12vw;
+    height: 12vw;
     background-color: rgba(102, 61, 0, 0);
+    margin: 0;
   }
   img.arrow {
     width: 3vw;
     height: 3vw;
+    margin: 0;
     background-color: transparent;
     transform: rotate(90deg);
+  }
+  img.prev {
+    transform: rotate(270deg);
+    width: 5vh;
+    height: 5vh;
+  }
+  img.next {
+    width: 5vh;
+    height: 5vh;
   }
   //Types
   .types {
     text-align: center;
   }
   .types span {
-    font-size: 1em;
+    font-size: 1.5vw;
     display: inline-block;
     width: 9vw;
     margin: 0 1vw;
     padding: 0vw 0.5vw 0.3vw;
     font-weight: bolder;
     border: 3px solid black;
-    border-radius: 500px;
+    border-radius: 500vh;
   }
   //Types border-colors
   span#rock {
@@ -107,8 +128,8 @@
     background-color: rgba(96, 125, 139, 0.5);
   }
   span#flying {
-    border-color: rgb(3, 169, 244);
-    background-color: rgba(3, 169, 244, 0.5);
+    border-color: rgb(3, 208, 244);
+    background-color: rgba(3, 208, 244, 0.5);
   }
   span#dragon {
     border-color: rgb(48, 34, 29);
@@ -131,8 +152,8 @@
     background-color: rgba(76, 175, 80, 0.5);
   }
   span#water {
-    border-color: rgb(3, 169, 244);
-    background-color: rgba(3, 169, 244, 0.5);
+    border-color: rgb(0, 81, 255);
+    background-color: rgba(0, 81, 255, 0.5);
   }
   span#psychic {
     border-color: rgb(156, 39, 176);
