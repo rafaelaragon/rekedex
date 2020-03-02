@@ -90,8 +90,6 @@ class Pokemon extends React.Component {
     const { pokemon, pokemonDetails, isLoaded, id } = this.props;
     const { firstEv, secondEv, thirdEv } = this.props;
 
-    //const firstEv = this.props.pokemonEvolutionChain[this.props.id];
-
     if (!isLoaded) {
       return <LoadingSpinner />;
     } else {
@@ -103,10 +101,10 @@ class Pokemon extends React.Component {
           <h2 id="id">N.º{!!id && id < 10001 ? this.num : this.num - 9193}</h2>
           {!isShiny ? this.addImages(this.maleFront, id, pokemon[id].name) : ""}
           {!isShiny ? this.addImages(this.maleBack, id, pokemon[id].name) : ""}
-          {!isShiny && !!pokemon.sprites //.front_female
+          {!isShiny && !!pokemon[id].sprites.front_female
             ? this.addImages(this.femaleFront, id, pokemon[id].name)
             : ""}
-          {!isShiny && !!pokemon.sprites //.back_female
+          {!isShiny && !!pokemon[id].sprites.back_female
             ? this.addImages(this.femaleBack, id, pokemon[id].name)
             : ""}
           {isShiny
@@ -115,10 +113,10 @@ class Pokemon extends React.Component {
           {isShiny
             ? this.addImages(this.maleBackShiny, id, pokemon[id].name)
             : ""}
-          {isShiny && !!pokemon.sprites //.front_shiny_female
+          {isShiny && !!pokemon[id].sprites.front_shiny_female
             ? this.addImages(this.femaleFrontShiny, id, pokemon[id].name)
             : ""}
-          {isShiny && !!pokemon.sprites //.back_shiny_female
+          {isShiny && !!pokemon[id].sprites.back_shiny_female
             ? this.addImages(this.femaleBackShiny, id, pokemon[id].name)
             : ""}
 
