@@ -96,7 +96,6 @@ export function loadPokemons(limit, offset) {
 
 export function loadPokemon(name) {
   return dispatch => {
-    name = name.slice(0, -1);
     return fetch("https://pokeapi.co/api/v2/pokemon/" + name)
       .then(res => res.json())
       .then(result => {
@@ -107,7 +106,6 @@ export function loadPokemon(name) {
 
 export function loadPokemonDetails(name) {
   return dispatch => {
-    name = name.slice(0, -1);
     return fetch("https://pokeapi.co/api/v2/pokemon-species/" + name)
       .then(res => res.json())
       .then(result => {
@@ -171,7 +169,6 @@ export function loadItems(limit, offset) {
 
 export function loadItem(item) {
   return dispatch => {
-    item = item.slice(0, -1);
     return fetch("https://pokeapi.co/api/v2/item/" + item)
       .then(res => res.json())
       .then(result => {

@@ -6,7 +6,12 @@ import { NavLink, Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Arrow from "../../assets/images/arrow.png";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
-import { addDefaultSrc, capitalize, pad } from "../../functions/functions";
+import {
+  addDefaultSrc,
+  capitalize,
+  pad,
+  upperCase
+} from "../../functions/functions";
 import {
   loadPokemon,
   loadPokemonDetails,
@@ -43,8 +48,7 @@ class Pokemon extends React.Component {
     "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/female/";
 
   //Datos del pokemon para llamar a la api
-  queryString = window.location.pathname;
-  pokemonName = this.queryString.substring(9);
+  pokemonName = this.props.match.params.pokemonId;
   //
 
   remount = async () => {
@@ -87,8 +91,15 @@ class Pokemon extends React.Component {
   render() {
     const { isShiny } = this.state;
 
-    const { pokemon, pokemonDetails, isLoaded, id } = this.props;
-    const { firstEv, secondEv, thirdEv } = this.props;
+    const {
+      pokemon,
+      pokemonDetails,
+      isLoaded,
+      id,
+      firstEv,
+      secondEv,
+      thirdEv
+    } = this.props;
 
     if (!isLoaded) {
       return <LoadingSpinner />;
@@ -201,7 +212,7 @@ class Pokemon extends React.Component {
                           target="_blank"
                           href={
                             "https://pokemon.fandom.com/wiki/" +
-                            ability.ability.name
+                            upperCase(ability.ability.name, "_")
                           }
                         >
                           {capitalize(ability.ability.name).replace("-", " ")}

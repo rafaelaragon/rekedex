@@ -19,11 +19,11 @@ class Main extends React.Component {
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/pokedex/" component={Pokedex} />
-            <Route path="/pokemon/" component={Pokemon} />
+            <Route path="/pokemon/:pokemonId" component={Pokemon} />
             <Route exact path="/items" component={Items} />
             <Route exact path="/items/categories" component={ItemCategories} />
             <Route strict path="/items/categories/" component={ItemCategories} />
-            <Route path="/item/" component={Item} />
+            <Route path="/item/:itemId" component={Item} />
             <Route path="/moves" component={Moves} />
             <Route path="*" component={Home} />
           </Switch>

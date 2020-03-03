@@ -18,28 +18,9 @@ class Item extends React.Component {
   }
 
   //Item details to get the api call
-  queryString = window.location.pathname;
-  item = this.queryString.substring(6);
+  item = this.props.match.params.itemId;
   api = "https://pokeapi.co/api/v2/item/" + this.item;
 
-  /*
-    fetch(this.api)
-      .then(res => res.json())
-      .then(
-        result => {
-          console.log(result);
-          this.setState({
-            isLoaded: true,
-            id: result.id,
-            name: result.names.filter(name => name.language.name === "en")[0]
-              .name,
-            img: result.sprites.default,
-            category: result.category.name,
-            desc: result.effect_entries[0].effect,
-            cost: result.cost
-          });
-        }
-      );*/
   componentDidMount() {
     this.props.loadItem(this.item);
   }
@@ -59,11 +40,13 @@ class Item extends React.Component {
               onError={addDefaultSrc}
             />
             <Card.Body>
-              <Card.Title id="name">{capitalize(item[id].name).replace("-", " ")}</Card.Title>
+              <Card.Title id="name">
+                {capitalize(item[id].name).replace("-", " ")}
+              </Card.Title>
               <Card.Title id="category">
                 <Nav>
                   <NavLink
-                    to={"/items/categories/" + item[id].category.url + "/"}
+                    to={"/items/categories/" + item[id].category.name + "/"}
                   >
                     {capitalize(item[id].category.name).replace("-", " ")}
                   </NavLink>
