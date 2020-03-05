@@ -26,7 +26,7 @@ export function upperCase(word, char) {
         word.slice(0, i + 1) +
         word.charAt(i + 1).toUpperCase() +
         word.slice(i + 2);
-      return word;
     }
   }
+  return word;
 }
